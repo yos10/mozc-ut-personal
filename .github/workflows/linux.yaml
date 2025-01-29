@@ -1,0 +1,44 @@
+name: CI for Linux
+# https://github.com/google/mozc/blob/master/docs/build_mozc_in_docker.md
+
+on:
+  workflow_dispatch:
+
+permissions: read-all
+
+# Prevent previous workflows from running.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    # https://github.com/actions/runner-images/blob/main/images/ubuntu/Ubuntu2204-Readme.md
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Setup
+        run: |
+          docker compose up -d
+
+      - name: bazel build
+        run: |
+          docker compose exec mozc_build bazelisk build package --config oss_linux --config release_build
+
+      - name: copy mozc.zip
+        run: |
+          docker compose cp mozc_build:/home/mozc_builder/work/mozc/src/bazel-bin/unix/mozc.zip .
+          docker compose down
+
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: mozc.zip
+          path: mozc.zip
+          if-no-files-found: warn

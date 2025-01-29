@@ -1,0 +1,9 @@
+services:
+  mozc_build:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mozc_ubuntu22.04
+    container_name: mozc_build
+    tty: true
+    stdin_open: true  # interactive オプション
