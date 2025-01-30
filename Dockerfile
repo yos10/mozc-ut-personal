@@ -69,7 +69,7 @@ ENV ANDROID_NDK_HOME /home/mozc_builder/work/android-ndk-r27b
 # check out Mozc source with submodules
 RUN mkdir /home/mozc_builder/work/mozc
 # COPY --chown=mozc_builder:mozc_builder src/ /home/mozc_builder/work/mozc/src/
-RUN git clone https://github.com/google/mozc.git -b master --single-branch --recursive --depth 1
+RUN git clone https://github.com/google/mozc.git -b 2.31.5712.102 --single-branch --recursive --depth 1
 
 # mozc-ut
 USER root
